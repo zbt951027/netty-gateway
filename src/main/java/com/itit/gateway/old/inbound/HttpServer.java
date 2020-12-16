@@ -14,14 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class HttpInboundServer {
-    private static Logger logger = LoggerFactory.getLogger(HttpInboundServer.class);
+public class HttpServer {
+    private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     private int port;
 
     private String proxyServer;
 
-    public HttpInboundServer(int port, String proxyServer) {
+    public HttpServer(int port, String proxyServer) {
         this.port = port;
         this.proxyServer = proxyServer;
     }
@@ -32,10 +32,12 @@ public class HttpInboundServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try {
+            // Netty服务端应用开发的入口
             ServerBootstrap b = new ServerBootstrap();
-            // 链接请求等待队列的大小
+
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
+                    // 链接请求等待队列的大小
                     .option(ChannelOption.SO_BACKLOG, 128)
                     // 关闭Nagle算法（该算法会将小数据块合并成一个大的数据块后在发送），true是关闭，如果要求一个比较高的实时性，可以把这个关闭
                     .option(ChannelOption.TCP_NODELAY, true)
@@ -50,7 +52,9 @@ public class HttpInboundServer {
                     .option(EpollChannelOption.SO_REUSEPORT, true)
                     // workerGroup KEEPALIVE
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    // ByteBuf的分配器(重用缓冲区)
                     .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                    // handler在初始化时就会执行，而childHandler会在客户端成功connect后才执行，这是两者的区别。
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new HttpInboundInitializer(this.proxyServer));
 

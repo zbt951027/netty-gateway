@@ -1,7 +1,7 @@
 package com.itit.gateway.old.server;
 
 
-import com.itit.gateway.old.inbound.HttpInboundServer;
+import com.itit.gateway.old.inbound.HttpServer;
 
 public class NettyServerApplication {
 
@@ -17,7 +17,7 @@ public class NettyServerApplication {
 
         int port = Integer.parseInt(proxyPort);
         System.out.println(GATEWAY_NAME + " " + GATEWAY_VERSION + " starting...");
-        HttpInboundServer server = new HttpInboundServer(port, proxyServer);
+        HttpServer server = new HttpServer(port, proxyServer);
         System.out.println(GATEWAY_NAME + " " + GATEWAY_VERSION + " started at http://localhost:" + port + " for server:" + proxyServer);
         try {
             server.run();
