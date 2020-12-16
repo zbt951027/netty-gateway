@@ -1,4 +1,4 @@
-package gateway.inbound;
+package com.itit.gateway.old.inbound;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;

@@ -1,6 +1,7 @@
-package gateway;
+package com.itit.gateway.old.server;
 
-import gateway.inbound.HttpInboundServer;
+
+import com.itit.gateway.old.inbound.HttpInboundServer;
 
 public class NettyServerApplication {
 
@@ -8,7 +9,7 @@ public class NettyServerApplication {
     public final static String GATEWAY_VERSION = "1.0.0";
 
     public static void main(String[] args) {
-        String proxyServer = System.getProperty("proxyServer", "http://localhost:8808");
+        String proxyServer = System.getProperty("proxyServer", "http://localhost:8088");
         String proxyPort = System.getProperty("proxyPort", "8888");
 
         //  http://localhost:8888/api/hello  ==> gateway API

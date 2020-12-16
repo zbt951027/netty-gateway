@@ -1,6 +1,6 @@
-package gateway.inbound;
+package com.itit.gateway.old.inbound;
 
-import gateway.outbound.okhttp.OkHttpOutboundHandler;
+import com.itit.gateway.old.okhttp.OkHttpOutboundHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;

@@ -1,0 +1,16 @@
+# Server 参数配置
+server:
+  port: 8899
+  boos:
+    threads: 1
+  work:
+    threads: 16
+  SO_REUSEADDR: true
+  AUTO_CLOSE: true
+
+# CustomClientAsync 参数配置
+client:
+  SO_REUSEADDR: true
+  TCP_NODELAY: true
+  AUTO_CLOSE: true
+  SO_KEEPALIVE: true

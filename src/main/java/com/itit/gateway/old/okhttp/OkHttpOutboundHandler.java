@@ -1,4 +1,4 @@
-package gateway.outbound.okhttp;
+package com.itit.gateway.old.okhttp;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
