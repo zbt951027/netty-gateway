@@ -1,7 +1,6 @@
 package com.itit.gateway.complete.client;
 
 import com.itit.gateway.complete.common.CreateResponse;
-import com.itit.gateway.complete.server.ServerSyncHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -24,8 +23,8 @@ public class CustomClientSyncHandler extends SimpleChannelInboundHandler<FullHtt
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) {
         // 拿到结果后再释放锁
+        logger.info(Thread.currentThread().getName() + " 已拿到结果: " + msg);
         response = CreateResponse.createResponse(msg);
-        logger.info(Thread.currentThread().getName() + " 已拿到结果: " + response);
         latch.countDown();
     }
 
@@ -33,15 +32,6 @@ public class CustomClientSyncHandler extends SimpleChannelInboundHandler<FullHtt
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
-    }
-
-    /**
-     * 锁的初始化
-     *
-     * @param latch CountDownLatch
-     */
-    void setLatch(CountDownLatch latch) {
-        this.latch = latch;
     }
 
     /**

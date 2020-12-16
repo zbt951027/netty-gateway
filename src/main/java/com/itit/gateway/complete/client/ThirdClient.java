@@ -9,7 +9,10 @@ import io.netty.handler.codec.http.*;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
@@ -28,7 +31,9 @@ import static org.asynchttpclient.Dsl.asyncHttpClient;
  */
 @Component
 @EnableAspectJAutoProxy(exposeProxy = true)
-public class ThirdClientAsync {
+@Primary
+public class ThirdClient implements ClientSync {
+    private static final Logger logger = LoggerFactory.getLogger(ThirdClient.class);
 
     private AsyncHttpClient asyncHttpClient = asyncHttpClient();
 
@@ -52,6 +57,7 @@ public class ThirdClientAsync {
         if (originResponse.getStatusCode() != 200) {
             status = HttpResponseStatus.NOT_FOUND;
         }
+
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status,
                 Unpooled.wrappedBuffer(responseBody));
         response.headers()
@@ -63,8 +69,10 @@ public class ThirdClientAsync {
     @Route
     @RequestFilter
     @ResponseFilter
+    @Override
     public FullHttpResponse execute(FullHttpRequest request, Channel serverOutbound) {
         try {
+//            logger.info("请求体Request：{}， Header信息：{}", request, HttpUtil.getRequestHeader(request));
             return getResponse(request.uri());
         } catch (Exception e) {
             e.printStackTrace();

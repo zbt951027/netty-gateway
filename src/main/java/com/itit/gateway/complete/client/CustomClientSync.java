@@ -1,10 +1,10 @@
 package com.itit.gateway.complete.client;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.itit.gateway.complete.annotation.RequestFilter;
 import com.itit.gateway.complete.annotation.ResponseFilter;
 import com.itit.gateway.complete.annotation.Route;
+import com.itit.gateway.complete.common.HttpUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -63,25 +64,25 @@ public class CustomClientSync implements ClientSync, DisposableBean {
      */
     private FullHttpResponse getResponse(FullHttpRequest request, Channel serverChannel) throws InterruptedException, URISyntaxException {
         // 查看缓存池中是否有可重用的channel
-        if (channelPool.containsKey(serverChannel)) {
-            Channel channel = channelPool.get(serverChannel);
-            if (!channel.isActive() || !channel.isWritable() || !channel.isOpen()) {
-                logger.debug("Channel can't reuse");
-            } else {
-                try {
-                    CustomClientSyncHandler handler = new CustomClientSyncHandler();
-                    channel.pipeline().replace("clientHandler", "clientHandler", handler);
-                    logger.info("请求体Request：{}", request);
-                    channel.writeAndFlush(request.retain()).sync();
-                    return handler.getResponse();
-                } catch (Exception e) {
-                    logger.debug("channel reuse send msg failed!");
-                    channel.close();
-                    channelPool.remove(serverChannel);
-                }
-                logger.debug("Handler is busy, please user new channel");
-            }
-        }
+//        if (channelPool.containsKey(serverChannel)) {
+//            Channel channel = channelPool.get(serverChannel);
+//            if (!channel.isActive() || !channel.isWritable() || !channel.isOpen()) {
+//                logger.debug("Channel can't reuse");
+//            } else {
+//                try {
+//                    CustomClientSyncHandler handler = new CustomClientSyncHandler();
+//                    channel.pipeline().replace("clientHandler", "clientHandler", handler);
+//                    logger.info("请求体Request：{}", request);
+//                    channel.writeAndFlush(request.retain()).sync();
+//                    return handler.getResponse();
+//                } catch (Exception e) {
+//                    logger.debug("channel reuse send msg failed!");
+//                    channel.close();
+//                    channelPool.remove(serverChannel);
+//                }
+//                logger.debug("Handler is busy, please user new channel");
+//            }
+//        }
 
 
         // 没有或者不可用则新建
@@ -91,8 +92,7 @@ public class CustomClientSync implements ClientSync, DisposableBean {
         Channel channel = createChannel(uri.getHost(), uri.getPort());
         channel.pipeline().replace("clientHandler", "clientHandler", handler);
         channelPool.put(serverChannel, channel);
-
-        logger.info("请求体Request：{}", JSON.toJSONString(request));
+        logger.info("请求体Request：{}， Header信息：{}", request, HttpUtil.getRequestHeader(request));
         channel.writeAndFlush(request).sync();
         return handler.getResponse();
     }
@@ -124,9 +124,9 @@ public class CustomClientSync implements ClientSync, DisposableBean {
     public FullHttpResponse execute(FullHttpRequest request, Channel serverOutbound) {
         try {
             return getResponse(request, serverOutbound);
-    } catch (InterruptedException | URISyntaxException e) {
-        e.printStackTrace();
-    }
+        } catch (InterruptedException | URISyntaxException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

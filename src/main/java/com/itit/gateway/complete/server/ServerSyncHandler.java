@@ -1,7 +1,6 @@
 package com.itit.gateway.complete.server;
 
-import com.itit.gateway.complete.client.CustomClientSync;
-import com.itit.gateway.complete.client.ThirdClientAsync;
+import com.itit.gateway.complete.client.ClientSync;
 import com.itit.gateway.complete.common.CreateRequest;
 import com.itit.gateway.complete.common.CreateResponse;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,9 +20,9 @@ public class ServerSyncHandler extends SimpleChannelInboundHandler<FullHttpReque
 
     private static final Logger logger = LoggerFactory.getLogger(ServerSyncHandler.class);
 
-    private final ThirdClientAsync client;
+    private final ClientSync client;
 
-    ServerSyncHandler(ThirdClientAsync clientAsync) {
+    ServerSyncHandler(ClientSync clientAsync) {
         this.client = clientAsync;
     }
 

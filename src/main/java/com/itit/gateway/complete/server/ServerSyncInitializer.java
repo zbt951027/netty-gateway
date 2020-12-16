@@ -1,7 +1,6 @@
 package com.itit.gateway.complete.server;
 
-import com.itit.gateway.complete.client.CustomClientSync;
-import com.itit.gateway.complete.client.ThirdClientAsync;
+import com.itit.gateway.complete.client.ClientSync;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -14,9 +13,9 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
  */
 public class ServerSyncInitializer extends ChannelInitializer<SocketChannel> {
 
-    private final ThirdClientAsync client;
+    private final ClientSync client;
 
-    ServerSyncInitializer(ThirdClientAsync clientAsync) {
+    ServerSyncInitializer(ClientSync clientAsync) {
         this.client = clientAsync;
     }
 

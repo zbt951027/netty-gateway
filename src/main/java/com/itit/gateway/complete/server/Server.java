@@ -1,7 +1,6 @@
 package com.itit.gateway.complete.server;
 
-import com.itit.gateway.complete.client.CustomClientSync;
-import com.itit.gateway.complete.client.ThirdClientAsync;
+import com.itit.gateway.complete.client.ClientSync;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -34,7 +33,7 @@ public class Server implements ApplicationRunner, DisposableBean {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     @Autowired
-    private ThirdClientAsync clientSync;
+    private ClientSync clientSync;
 
     private final
     Environment environment;
@@ -62,10 +61,10 @@ public class Server implements ApplicationRunner, DisposableBean {
 
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, serverGroup)
+                .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_REUSEADDR, soReuseaddr)
                 .option(ChannelOption.AUTO_CLOSE, autoClose)
                 .option(ChannelOption.SO_BACKLOG, 1024)
-                .channel(NioServerSocketChannel.class)
                 // 使用同步非阻塞方式
                 .childHandler(new ServerSyncInitializer(clientSync));
 
